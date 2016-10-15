@@ -1,0 +1,15 @@
+
+package com.company1.project1.component.service.{{schema}};
+
+import java.util.List;
+import com.company1.project1.dto.{{schema}}.*;
+
+public interface {{class-name}}Service {
+
+  List<{{class-name}}> get{{class-name}}({{class-name}} en);
+  int insert{{class-name}}({{class-name}} en);
+  int update{{class-name}}({{class-name}} en);
+  int delete{{class-name}}({{class-name}} en);
+
+}
+

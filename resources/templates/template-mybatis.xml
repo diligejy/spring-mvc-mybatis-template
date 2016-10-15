@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN' 'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+<mapper namespace="com.company1.project1.component.dao.{{schema}}.{{class-name}}Dao">
+  {%comment %}
+<primary-keys>
+{%for c in table-pks %}
+  <t>{{c.column_name}}</t>
+  {% endfor %}
+</primary-keys>
+<cols>
+  {%for c in table-all-cols %}
+  <r>{{c}}</r>
+  {% endfor %}
+</cols>
+  {% endcomment%}
+<select id="get{{class-name}}" parameterType="{{class-name}}" resultType="{{class-name}}">
+SELECT a.*
+FROM {{schema}}.{{table-name}} AS a
+WHERE a.use_yn='Y'
+{% for c in table-all-cols %}{%
+ if c.column_name|non-updatable-column? %}{%else
+ %}{%if c.is_char
+   %}<if test="{{c.column_name}} > '' ">{% else
+   %}<if test="{{c.column_name}} > 0 ">{% endif %}
+AND a.{{c.column_name}} = {{"#{"}}{{c.column_name}}{{"}"}}
+</if>
+{% endif
+%}{%
+endfor %}
+</select>
+
+<insert id="insert{{class-name}}" parameterType="{{class-name}}">
+  <selectKey keyProperty="new_generated_key" order="BEFORE" resultType="int">
+    select nextval('{{schema}}.{{table-name}}_seq')
+  </selectKey>
+  INSERT INTO {{schema}}.{{table-name}} (
+  {%for c in table-pks
+  %} {{c.column_name}} ,
+  {% endfor
+%}{%for c in table-cols
+  %} {{c.column_name}} {%if forloop.last%}{% else %},{% endif %}
+  {% endfor %} ) VALUES (
+  {%for c in table-pks
+  %}{{"#{new_generated_key}"}} ,
+  {% endfor
+%}{%for c in table-cols
+  %}{%if c.column_name|date_column? %} NOW() {%else
+  %}{%if c.column_name|use_yn? %}'Y' {%else
+  %}{{"#{"}}{{c.column_name}}{{"}"}}{% endif %}{% endif %} {%if forloop.last%}{% else %},{% endif %}
+  {% endfor %} );
+</insert>
+
+<update id="update{{class-name}}" parameterType="{{class-name}}">
+  UPDATE {{schema}}.{{table-name}} SET
+  update_dt=NOW()
+{%for
+  c in table-cols  %}{%ifequal c.column_name "update_dt"  %}{% else
+%}
+{%if c.column_name|non-updatable-column? %}{%else
+  %}{%if c.is_char %}<if test="{{c.column_name}} > '' ">{% else %}<if test="{{c.column_name}} > 0 ">{%endif%}
+ , {{c.column_name}} = {{"#{"}}{{c.column_name}}{{"}"}}
+</if>{% endif
+  %}{%  endifequal
+%}{% endfor %}
+WHERE use_yn='Y'
+{%for c in table-pks %} {{c.column_name}} = {{"#{"}}{{c.column_name}}{{"}"}}
+AND {% endfor %}
+</update>
+
+<update id="delete{{class-name}}" parameterType="{{class-name}}">
+UPDATE {{schema}}.{{table-name}} SET
+update_dt=NOW() , use_yn='N'
+WHERE use_yn='Y'
+{%for c in table-pks %}
+AND {{c.column_name}} = {{"#{"}}{{c.column_name}}{{"}"}}
+{% endfor %}
+</update>
+
+
+</mapper>

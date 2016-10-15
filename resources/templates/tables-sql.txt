@@ -1,0 +1,16 @@
+#SCHEMA
+# {{schema}}
+{% for t in tables
+%}
+CREATE SEQUENCE {{schema}}.{{t.table_name}}_seq
+INCREMENT 1
+MINVALUE 1
+MAXVALUE 9223372036854775807
+START 1
+CACHE 1;
+ALTER TABLE {{schema}}.{{t.table_name}}_seq OWNER TO pcowin;
+{% endfor %}
+
+
+
+

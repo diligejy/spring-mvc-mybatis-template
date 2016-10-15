@@ -1,0 +1,38 @@
+
+package com.company1.project1.component.service.{{schema}};
+
+import java.util.List;
+import com.company1.project1.dto.{{schema}}.*;
+import com.company1.project1.component.dao.{{schema}}.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class {{class-name}}ServiceImpl implements {{class-name}}Service {
+
+	@Autowired
+	{{class-name}}Dao {{property-name}}Dao;
+
+  public List<{{class-name}}> get{{class-name}}({{class-name}} en) {
+
+    return {{property-name}}Dao.get{{class-name}}(en);
+
+  }
+  public int insert{{class-name}}({{class-name}} en) {
+
+    return {{property-name}}Dao.insert{{class-name}}(en);
+
+  }
+  public int update{{class-name}}({{class-name}} en) {
+
+    return {{property-name}}Dao.update{{class-name}}(en);
+
+  }
+  public int delete{{class-name}}({{class-name}} en) {
+
+    return {{property-name}}Dao.delete{{class-name}}(en);
+
+  }
+
+}
+

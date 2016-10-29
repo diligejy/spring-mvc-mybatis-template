@@ -1,5 +1,6 @@
 #SCHEMA
 # {{schema}}
+# {{package-name}}
 
 mkdir -p mapper/{{schema}}
 mkdir -p dao/{{schema}}
@@ -9,23 +10,23 @@ mkdir -p service/{{schema}}
 
 {% for t in tables
 %}
-curl "http://localhost:3000/table?schema={{schema}}&table_name={{t.table_name }}" -o mapper/{{schema}}/query-{{t.table_name|PascalCase}}.xml
+curl "http://localhost:3000/table?schema={{schema}}&table_name={{t.table_name }}&package_name={{package-name}}" -o mapper/{{schema}}/{{t.table_name|PascalCase}}-mapper.xml
 {% endfor %}
 
 {% for t in tables
 %}
-curl "http://localhost:3000/class-dao?schema={{schema}}&table_name={{t.table_name }}" -o dao/{{schema}}/{{t.table_name|PascalCase}}Dao.java
+curl "http://localhost:3000/class-dao?schema={{schema}}&table_name={{t.table_name }}&package_name={{package-name}}" -o dao/{{schema}}/{{t.table_name|PascalCase}}Dao.java
 {% endfor %}
 
 {% for t in tables
 %}
-curl "http://localhost:3000/class-entity?schema={{schema}}&table_name={{t.table_name }}" -o dto/{{schema}}/{{t.table_name|PascalCase}}.java
+curl "http://localhost:3000/class-entity?schema={{schema}}&table_name={{t.table_name }}&package_name={{package-name}}" -o dto/{{schema}}/{{t.table_name|PascalCase}}.java
 {% endfor %}
 
 {% for t in tables
 %}
-curl "http://localhost:3000/class-service?schema={{schema}}&table_name={{t.table_name }}" -o service/{{schema}}/{{t.table_name|PascalCase}}Service.java
-curl "http://localhost:3000/class-serviceImpl?schema={{schema}}&table_name={{t.table_name }}" -o service/{{schema}}/{{t.table_name|PascalCase}}ServiceImpl.java
+curl "http://localhost:3000/class-service?schema={{schema}}&table_name={{t.table_name }}&package_name={{package-name}}" -o service/{{schema}}/{{t.table_name|PascalCase}}Service.java
+curl "http://localhost:3000/class-serviceImpl?schema={{schema}}&table_name={{t.table_name }}&package_name={{package-name}}" -o service/{{schema}}/{{t.table_name|PascalCase}}ServiceImpl.java
 {% endfor %}
 
 

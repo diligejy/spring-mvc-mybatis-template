@@ -1,5 +1,6 @@
-package com.company1.project1.dto.{{schema}};
+package {{package-name}}.dto.{{schema}};
 
+import java.sql.Timestamp;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,7 +11,9 @@ import com.company1.project1.dto.common.Page;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class {{class-name}} extends Page {
 {%for c in table-all-cols%}
-  {%if c.is_char %}String{% else %}Long{%endif%} {{c.column_name}};{% endfor %}
+  {%if c.is_char %}String{%
+  else %}{%if c.column_name|date_column? %}Timestamp{%
+  else %}Integer{%endif%}{%endif%} {{c.column_name}};{% endfor %}
 
 }
 

@@ -66,22 +66,29 @@
    "home.html"
    {}))
 
+(def default-package-name "com.company1.project1")
 
-(defn table-page [schema table-name]
-  (let [
-        table-all-cols (get-table-cols schema table-name)
-        table-pks (get-primary-keys schema table-name)
-        pk-set (into #{} (map :column_name table-pks))
-        table-cols (remove #(pk-set (:column_name %)) table-all-cols)
-        ]
-    (layout/render "template-mybatis.xml"
-                   {:schema schema
-                    :table-name table-name
-                    :class-name (->PascalCase table-name)
-                    :table-cols table-cols
-                    :table-all-cols table-all-cols
-                    :table-pks table-pks})))
-(defn table-mybatis [schema table-name]
+(defn filter-package-name [name]
+  (do
+    (println (str "name=>" name "<"))
+  (if (empty? name) default-package-name name)))
+
+;(defn table-page [schema table-name]
+;  (let [
+;        table-all-cols (get-table-cols schema table-name)
+;        table-pks (get-primary-keys schema table-name)
+;        pk-set (into #{} (map :column_name table-pks))
+;        table-cols (remove #(pk-set (:column_name %)) table-all-cols)
+;        ]
+;    (layout/render "template-mybatis.xml"
+;                   {:schema schema
+;                    :table-name table-name
+;                    :class-name (->PascalCase table-name)
+;                    :table-cols table-cols
+;                    :table-all-cols table-all-cols
+;                    :table-pks table-pks})))
+
+(defn table-mybatis [schema table-name package-name]
   (let [
         table-all-cols (get-table-cols schema table-name)
         table-pks (get-primary-keys schema table-name)
@@ -93,16 +100,21 @@
      :class-name (->PascalCase table-name)
      :table-cols table-cols
      :table-all-cols table-all-cols
-     :table-pks table-pks}))
+     :table-pks table-pks
+     :package-name (filter-package-name package-name)
+     }))
 
-(defn tables-work [schema]
+(defn tables-work [schema table-name package-name]
   (let [
-        tables (get-table-list schema nil)
+        tables (get-table-list schema table-name)
         ]
     (do
       (println tables)
-      {:tables tables :schema schema}
+      {:tables tables :schema schema
+       :package-name package-name
+       }
       )))
+
 (defn tables-sql [schema]
   (let [
         tables (get-table-list schema nil)
@@ -110,28 +122,34 @@
     {:tables tables :schema schema}
     ))
 
-(defn class-dao [schema table-name]
+(defn class-dao [schema table-name package-name]
   {:schema schema
    :table-name table-name
-   :class-name (->PascalCase table-name)}
+   :class-name (->PascalCase table-name)
+   :package-name (filter-package-name package-name)
+   }
   )
-(defn class-service [schema table-name]
+(defn class-service [schema table-name package-name]
   {:schema schema
    :table-name table-name
-   :class-name (->PascalCase table-name)}
+   :class-name (->PascalCase table-name)
+   :package-name (filter-package-name package-name)
+   }
   )
-(defn class-serviceImpl [schema table-name]
+(defn class-serviceImpl [schema table-name package-name]
   {:schema schema
    :table-name table-name
    :class-name (->PascalCase table-name)
    :property-name (->camelCase table-name)
+   :package-name (filter-package-name package-name)
    }
   )
-(defn class-entity [schema table-name]
+(defn class-entity [schema table-name package-name]
   {:schema schema
    :table-name table-name
    :class-name (->PascalCase table-name)
    :table-all-cols (get-table-cols schema table-name)
+   :package-name (filter-package-name package-name)
    }
   )
 
@@ -147,48 +165,48 @@
            ;;(GET "/" [] (home-page))
            ;(GET "/about" [] (about-page))
            (GET "/table" request
-             (let [{:keys [schema table_name]} (:params request)]
+             (let [{:keys [schema table_name package_name]} (:params request)]
                (->
-                (#(table-mybatis schema table_name))
+                (#(table-mybatis schema table_name package_name))
                 (#(layout/render "template-mybatis.xml" %))
                 (response/content-type "text/xml")
                 ))
              )
            (GET "/class-dao" request
-             (let [{:keys [schema table_name]} (:params request)]
+             (let [{:keys [schema table_name package_name]} (:params request)]
                (->
-                (#(class-dao schema table_name))
+                (#(class-dao schema table_name package_name))
                 (#(layout/render "template-class-dao.txt" %))
                 (response/content-type "text/plain")
                 ))
              )
            (GET "/class-service" request
-             (let [{:keys [schema table_name]} (:params request)]
+             (let [{:keys [schema table_name package_name]} (:params request)]
                (->
-                (#(class-service schema table_name))
+                (#(class-service schema table_name package_name))
                 (#(layout/render "template-class-service.txt" %))
                 (response/content-type "text/plain")
                 ))
              )
            (GET "/class-serviceImpl" request
-             (let [{:keys [schema table_name]} (:params request)]
+             (let [{:keys [schema table_name package_name]} (:params request)]
                (->
-                (#(class-serviceImpl schema table_name))
+                (#(class-serviceImpl schema table_name package_name))
                 (#(layout/render "template-class-serviceImpl.txt" %))
                 (response/content-type "text/plain")
                 ))
              )
            (GET "/class-entity" request
-             (let [{:keys [schema table_name]} (:params request)]
+             (let [{:keys [schema table_name package_name]} (:params request)]
                (->
-                (#(class-entity schema table_name))
+                (#(class-entity schema table_name package_name))
                 (#(layout/render "template-class-entity.txt" %))
                 (response/content-type "text/plain")
                 ))
              )
            (GET "/tables-sql" request
              (do
-               (println request)
+               ;(println request)
                (->
                 request
                 :params
@@ -198,15 +216,21 @@
                 (response/content-type "text/plain")
                 )))
            (GET "/" request
-             (do
-               (println request)
+             (let [{:keys [schema table_name package_name]} (:params request)]
                (->
-                request
-                :params
-                :schema
-                tables-work
+                (#(tables-work schema table_name package_name))
                 (#(layout/render "template.txt" %))
                 (response/content-type "text/plain")
                 )))
+             ;(do
+             ;  (println request)
+             ;  (->
+             ;   request
+             ;   :params
+             ;   :schema
+             ;   tables-work
+             ;   (#(layout/render "template.txt" %))
+             ;   (response/content-type "text/plain")
+             ;   )))
            )
 

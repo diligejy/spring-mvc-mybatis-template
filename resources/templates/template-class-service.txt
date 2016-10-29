@@ -1,5 +1,4 @@
-
-package com.company1.project1.component.service.{{schema}};
+package {{package-name}}.component.service.{{schema}};
 
 import java.util.List;
 import com.company1.project1.dto.{{schema}}.*;

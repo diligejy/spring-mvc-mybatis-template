@@ -1,5 +1,5 @@
 
-package com.company1.project1.component.dao.{{schema}};
+package {{package-name}}.component.dao.{{schema}};
 
 import java.util.List;
 import com.company1.project1.dto.{{schema}}.*;

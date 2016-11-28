@@ -1,7 +1,8 @@
 package {{package-name}}.component.service.{{schema}};
 
 import java.util.List;
-import com.company1.project1.dto.{{schema}}.*;
+import {{package-name}}.dto.{{schema}}.*;
+import {{package-name}}.dto.pss.{{class-name}};
 
 public interface {{class-name}}Service {
 

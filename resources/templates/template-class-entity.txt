@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.company1.project1.dto.common.Page;
+import {{package-name}}.dto.common.Page;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -12,9 +12,9 @@ import com.company1.project1.dto.common.Page;
 public class {{class-name}} extends Page {
 {%for c in table-all-cols%}
   {%if c.is_char %}String{%
-  else %}{%if c.column_name|date_column? %}Timestamp{%
-  else %}Integer{%endif%}{%endif%} {{c.column_name}};{% endfor %}
+  else %}{%if c.type_name|date_column? %}Timestamp{%
+  else %}{%if c.type_name|float_column? %}Double{%
+  else %}Integer{%endif%}{%endif%}{%endif%} {{c.column_name}};{% endfor %}
 
 }
-
 

@@ -38,7 +38,11 @@
        doall)))
 
 (defn tag-is_char [r]
-  (assoc r :is_char (if (re-find #"char" (or (r :type_name) "")) true false)))
+  (do
+    (println r)
+    (assoc r :is_char (if (re-find #"char" (or (r :type_name) "")) true false))
+    )
+    )
 
 (defn get-table-cols [schema table]
   (jdbc/with-db-metadata
@@ -153,8 +157,11 @@
    }
   )
 
+
 (filters/add-filter! :PascalCase #(->PascalCase %))
-(filters/add-filter! :date_column? #(#{"create_dt" "update_dt"} %))
+
+(filters/add-filter! :date_column? #(#{"timestamp" "timestamptz" "date" "time"} %))
+(filters/add-filter! :float_column?  (fn [tp] (re-matches #".*(float|double|numeric).*" tp)) )
 (filters/add-filter! :non-updatable-column? #(#{"create_dt" "update_dt" "use_yn"} %))
 (filters/add-filter! :use_yn? #(#{"use_yn"} %))
 

@@ -20,8 +20,8 @@ WHERE a.use_yn='Y'
 {% for c in table-all-cols %}{%
  if c.column_name|non-updatable-column? %}{%else
  %}{%if c.is_char
-   %}<if test="{{c.column_name}} > '' ">{% else
-   %}<if test="{{c.column_name}} > 0 ">{% endif %}
+   %}<if test="{{c.column_name}} != null and {{c.column_name}} > '' ">{% else
+   %}<if test="{{c.column_name}} != null and {{c.column_name}} != 0 ">{% endif %}
 AND a.{{c.column_name}} = {{"#{"}}{{c.column_name}}{{"}"}}
 </if>
 {% endif

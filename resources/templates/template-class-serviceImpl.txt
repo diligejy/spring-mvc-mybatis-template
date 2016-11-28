@@ -1,9 +1,9 @@
 
 package {{package-name}}.component.service.{{schema}};
 
-import java.util.List;
-import com.company1.project1.dto.{{schema}}.*;
-import com.company1.project1.component.dao.{{schema}}.*;
+import java.util.*;
+import {{package-name}}.dto.{{schema}}.*;
+import {{package-name}}.component.dao.{{schema}}.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

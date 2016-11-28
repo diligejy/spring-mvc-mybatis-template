@@ -2,7 +2,7 @@
 package {{package-name}}.component.dao.{{schema}};
 
 import java.util.List;
-import com.company1.project1.dto.{{schema}}.*;
+import {{package-name}}.{{schema}}.*;
 
 public interface {{class-name}}Dao {
 

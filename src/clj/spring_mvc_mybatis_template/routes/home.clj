@@ -40,7 +40,7 @@
 (defn tag-is_char [r]
   (do
     (println r)
-    (assoc r :is_char (if (re-find #"char" (or (r :type_name) "")) true false))
+    (assoc r :is_char (if (re-find #"(char|text)" (or (r :type_name) "")) true false))
     )
     )
 
@@ -157,13 +157,17 @@
    }
   )
 
+;
+; Filters
+;
 
 (filters/add-filter! :PascalCase #(->PascalCase %))
-
 (filters/add-filter! :date_column? #(#{"timestamp" "timestamptz" "date" "time"} %))
 (filters/add-filter! :float_column?  (fn [tp] (re-matches #".*(float|double|numeric).*" tp)) )
 (filters/add-filter! :non-updatable-column? #(#{"create_dt" "update_dt" "use_yn"} %))
 (filters/add-filter! :use_yn? #(#{"use_yn"} %))
+
+;(filters/add-filter! :type_db2java (fn [tp] ))
 
 ;(defn about-page []
 ;  (layout/render "about.html"))

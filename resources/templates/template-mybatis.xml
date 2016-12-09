@@ -70,8 +70,8 @@ endfor %}
   %}{%  endifequal
 %}{% endfor %}
 WHERE use_yn='Y'
-{%for c in table-pks %} {{c.column_name}} = {{"#{"}}{{c.column_name}}{{"}"}}
-AND {% endfor %}
+{%for c in table-pks %}AND {{c.column_name}} = {{"#{"}}{{c.column_name}}{{"}"}}
+{% endfor %}
 </update>
 
 <update id="delete{{class-name}}" parameterType="{{class-name}}">
